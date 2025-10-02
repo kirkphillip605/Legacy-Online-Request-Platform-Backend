@@ -1,0 +1,22 @@
+{"level":"info","message":"Logger initialized with level: info","timestamp":"2025-08-03 09:42:37"}
+{"level":"info","message":"Running in environment: development","timestamp":"2025-08-03 09:42:37"}
+{"database":"karaoke","define":{"underscored":true},"dialect":"postgres","host":"216.16.0.76","level":"info","message":"Using database configuration for 'development':","password":"***","pool":{"acquire":30000,"idle":10000,"max":5,"min":0},"port":"5432","timestamp":"2025-08-03 09:42:37","username":"postgres"}
+{"level":"info","message":"Logger initialized with level: info","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Running in environment: development","timestamp":"2025-08-03 09:43:23"}
+{"database":"karaoke","define":{"underscored":true},"dialect":"postgres","host":"216.16.0.76","level":"info","message":"Using database configuration for 'development':","password":"***","pool":{"acquire":30000,"idle":10000,"max":5,"min":0},"port":"5432","timestamp":"2025-08-03 09:43:23","username":"postgres"}
+{"level":"info","message":"Initializing Sequelize with dialect: postgres","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Attempting to connect to the database...","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Database connection has been established successfully.","timestamp":"2025-08-03 09:43:23"}
+{"level":"error","message":"Error ensuring state table row: relation \"state\" does not exist","name":"SequelizeDatabaseError","original":{"code":"42P01","file":"parse_relation.c","length":104,"line":"1449","name":"error","position":"33","routine":"parserOpenTable","severity":"ERROR","sql":"SELECT count(*) AS \"count\" FROM \"state\" AS \"State\";"},"parameters":{},"parent":{"code":"42P01","file":"parse_relation.c","length":104,"line":"1449","name":"error","position":"33","routine":"parserOpenTable","severity":"ERROR","sql":"SELECT count(*) AS \"count\" FROM \"state\" AS \"State\";"},"sql":"SELECT count(*) AS \"count\" FROM \"state\" AS \"State\";","stack":"Error\n    at Query.run (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/node_modules/sequelize/lib/dialects/postgres/query.js:50:25)\n    at /Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/node_modules/sequelize/lib/sequelize.js:315:28\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async PostgresQueryInterface.rawSelect (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/node_modules/sequelize/lib/dialects/abstract/query-interface.js:434:18)\n    at async State.aggregate (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/node_modules/sequelize/lib/model.js:1277:19)\n    at async State.count (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/node_modules/sequelize/lib/model.js:1306:20)\n    at async db.ensureStateRow (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/models/index.js:62:23)\n    at async startServer (/Users/phillipkirk/Development Projects/OpenKJ Online Request Platform/server.js:37:5)","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Database connection successful.","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Environment: development","timestamp":"2025-08-03 09:43:23"}
+{"level":"info","message":"Logger initialized with level: info","timestamp":"2025-08-03 09:45:45"}
+{"level":"info","message":"Running in environment: development","timestamp":"2025-08-03 09:45:45"}
+{"database":"karaoke","define":{"underscored":true},"dialect":"postgres","host":"216.16.0.76","level":"info","message":"Using database configuration for 'development':","password":"***","pool":{"acquire":30000,"idle":10000,"max":5,"min":0},"port":"5432","timestamp":"2025-08-03 09:45:45","username":"postgres"}
+{"level":"info","message":"Initializing Sequelize with dialect: postgres","timestamp":"2025-08-03 09:45:45"}
+{"level":"info","message":"Attempting to connect to the database...","timestamp":"2025-08-03 09:45:46"}
+{"level":"info","message":"Database connection has been established successfully.","timestamp":"2025-08-03 09:45:46"}
+{"level":"info","message":"Database connection successful.","timestamp":"2025-08-03 09:45:46"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2025-08-03 09:45:46"}
+{"level":"info","message":"Environment: development","timestamp":"2025-08-03 09:45:46"}
