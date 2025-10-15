@@ -1,65 +1,78 @@
-// models/user.model.js
-// Filepath: models/user.model.js
-const { DataTypes } = require('sequelize');
-// Consider adding bcrypt for password hashing later
-// const bcrypt = require('bcrypt');
+'use strict';
 
-module.exports = (sequelize) => {
-    const User = sequelize.define('User', { 
-        user_id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password_hash: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true,
-            },
-        },
-        is_admin: { 
-            type: DataTypes.BOOLEAN,
-            defaultValue: true, 
-        },
-    }, {
-        tableName: 'users',
-        timestamps: true,
-        // Hooks for password hashing can be added here later
-        // hooks: {
-        //     beforeCreate: async (user) => {
-        //         if (user.password_hash) {
-        //             const salt = await bcrypt.genSalt(10);
-        //             user.password_hash = await bcrypt.hash(user.password_hash, salt);
-        //         }
-        //     },
-        //     beforeUpdate: async (user) => {
-        //         if (user.changed('password_hash') && user.password_hash) {
-        //             const salt = await bcrypt.genSalt(10);
-        //             user.password_hash = await bcrypt.hash(user.password_hash, salt);
-        //         }
-        //     }
-        // }
-    });
+const { Model } = require('sequelize');
 
-    User.associate = (models) => {
-        User.hasMany(models.ApiKey, { foreignKey: 'user_id', onDelete: 'cascade' });
-    };
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      User.hasMany(models.Venue, {
+        foreignKey: { name: 'userId', field: 'userid', allowNull: false },
+        sourceKey: 'id',
+        as: 'venues',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
 
-     // Instance method to compare password (add later with bcrypt)
-    // User.prototype.validPassword = async function(password) {
-    //     return await bcrypt.compare(password, this.password_hash);
-    // };
+      if (models.SongDb) {
+        User.hasMany(models.SongDb, {
+          foreignKey: { name: 'userId', field: 'user_id', allowNull: false },
+          sourceKey: 'id',
+          as: 'songs',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+        });
+      }
+    }
+  }
 
-    return User;
+  User.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        defaultValue: sequelize.literal('gen_random_uuid()'),
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      passwordHash: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'passwordhash',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('now()'),
+        field: 'createdat',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('now()'),
+        field: 'updatedat',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'User',
+      tableName: 'users',
+      schema: 'public',
+      timestamps: true,
+      createdAt: 'createdat',
+      updatedAt: 'updatedat',
+      indexes: [
+        { name: 'idx_users_email', fields: ['email'] },
+        { name: 'idx_users_name', fields: ['name'] },
+      ],
+    }
+  );
+
+  return User;
 };

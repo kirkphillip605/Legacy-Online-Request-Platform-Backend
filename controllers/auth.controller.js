@@ -6,75 +6,55 @@ const logger = require('../utils/logger');
 const User = db.User;
 
 const authController = {
-    /**
-     * Handles admin user login.
-     * Expects { username, password } in request body.
-     * Returns JWT on success.
-     */
     login: async (req, res) => {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({ error: true, errorString: 'Username and password are required.' });
+        if (!email || !password) {
+            return res.status(400).json({ error: true, errorString: 'Email and password are required.' });
         }
 
         try {
-            const user = await User.findOne({ where: { username: username } });
+            const user = await User.findOne({ where: { email } });
 
-            if (!user) {
-                logger.warn(`Login attempt failed for username: ${username} (User not found)`);
+            if (!user || !user.passwordHash) {
+                logger.warn(`Login attempt failed for email: ${email} (User not found or missing password hash)`);
                 return res.status(401).json({ error: true, errorString: 'Invalid credentials.' });
             }
 
-            // Compare provided password with the stored hash
-            const isMatch = await bcrypt.compare(password, user.password_hash);
+            const isMatch = await bcrypt.compare(password, user.passwordHash);
 
             if (!isMatch) {
-                logger.warn(`Login attempt failed for username: ${username} (Password mismatch)`);
+                logger.warn(`Login attempt failed for email: ${email} (Password mismatch)`);
                 return res.status(401).json({ error: true, errorString: 'Invalid credentials.' });
             }
 
-            // Ensure the user is an admin (redundant if only admins can log in here, but good practice)
-            if (!user.is_admin) {
-                 logger.warn(`Login attempt successful but user is not admin: ${username}`);
-                 return res.status(403).json({ error: true, errorString: 'Access denied. Admin privileges required.' });
-             }
-
-            // Generate JWT payload
             const payload = {
-                userId: user.user_id,
-                username: user.username,
-                isAdmin: user.is_admin,
+                userId: user.id,
+                email: user.email,
+                name: user.name,
             };
 
-            // Sign the token
-            const token = jwt.sign(
-                payload,
-                process.env.JWT_SECRET,
-                { expiresIn: process.env.JWT_EXPIRES_IN || '1h' } // Use expiry from env or default
-            );
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {
+                expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+            });
 
-            logger.info(`Admin user logged in successfully: ${username} (ID: ${user.user_id})`);
+            logger.info(`User logged in successfully: ${email} (ID: ${user.id})`);
 
-            // Send token back to client
             res.status(200).json({
                 error: false,
                 message: 'Login successful.',
-                token: token,
-                user: { // Send back some non-sensitive user info
-                    userId: user.user_id,
-                    username: user.username,
+                token,
+                user: {
+                    userId: user.id,
+                    name: user.name,
                     email: user.email,
-                    isAdmin: user.is_admin
-                }
+                },
             });
-
         } catch (error) {
-            logger.error('Error during admin login:', error);
+            logger.error('Error during user login:', error);
             res.status(500).json({ error: true, errorString: 'Internal server error during login.' });
         }
-    }
-    // Add logout/token refresh later if needed
+    },
 };
 
 module.exports = authController;
