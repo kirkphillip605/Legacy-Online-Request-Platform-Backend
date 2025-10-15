@@ -1,57 +1,94 @@
-// models/request.model.js
-// (Keep the model definition as provided in the prompt)
-const { DataTypes } = require('sequelize');
+'use strict';
 
-module.exports = (sequelize) => {
-  const Request = sequelize.define('Request', {
-    request_id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    venue_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'venues', // Table name
-        key: 'venue_id',
+const { Model } = require('sequelize');
+
+module.exports = (sequelize, DataTypes) => {
+  class Request extends Model {
+    static associate(models) {
+      Request.belongsTo(models.Venue, {
+        foreignKey: { name: 'venueId', field: 'venueid', allowNull: false },
+        targetKey: 'id',
+        as: 'venue',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+
+      if (models.SingerUser) {
+        Request.belongsTo(models.SingerUser, {
+          foreignKey: { name: 'singerId', field: 'singer_id', allowNull: true },
+          targetKey: 'id',
+          as: 'singerUser',
+          onDelete: 'CASCADE',
+          onUpdate: 'CASCADE',
+        });
+      }
+    }
+  }
+
+  Request.init(
+    {
+      requestId: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        field: 'request_id',
       },
-      onUpdate: 'CASCADE',
-      // onDelete: 'CASCADE' is implicitly set by Venue's hasMany if not specified here
+      venueId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        field: 'venueid',
+      },
+      artist: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      singer: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      keyChange: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        field: 'key_change',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('now()'),
+        field: 'createdat',
+      },
+      processed: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      singerId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        field: 'singer_id',
+      },
+      requestTime: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.literal('now()'),
+        field: 'request_time',
+      },
     },
-    artist: {
-      type: DataTypes.STRING,
-      allowNull: false, // Requests should always have artist/title
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    singer: {
-      type: DataTypes.STRING,
-      allowNull: false, // Singer name is essential
-    },
-    request_time: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW, // Set time when request is created
-    },
-    key_change: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-      allowNull: false,
-    },
-  }, {
-    tableName: 'requests',
-    timestamps: false, // Keep as false per original model
-    indexes: [
-        { fields: ['venue_id'] },
-        { fields: ['request_time'] }
-    ]
-  });
-
-  Request.associate = (models) => {
-    Request.belongsTo(models.Venue, { foreignKey: 'venue_id', as: 'venue' });
-  };
+    {
+      sequelize,
+      modelName: 'Request',
+      tableName: 'requests',
+      schema: 'public',
+      timestamps: false,
+      indexes: [],
+    }
+  );
 
   return Request;
 };

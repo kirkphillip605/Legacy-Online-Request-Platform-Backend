@@ -2,20 +2,14 @@
 'use strict';
 const express = require('express');
 const favoriteController = require('../controllers/favorite.controller');
-const { verifyPatronToken } = require('../middleware/auth.middleware'); // Use Patron auth
+const { verifySingerToken } = require('../middleware/auth.middleware');
 
 const router = express.Router();
 
-// Apply patron authentication middleware to all favorite routes
-router.use(verifyPatronToken);
+router.use(verifySingerToken);
 
-// GET /api/patron/favorites/
 router.get('/', favoriteController.listFavorites);
-
-// POST /api/patron/favorites/
 router.post('/', favoriteController.addFavorite);
-
-// DELETE /api/patron/favorites/:songId
-router.delete('/:songId', favoriteController.removeFavorite);
+router.delete('/:favoriteId', favoriteController.removeFavorite);
 
 module.exports = router;
